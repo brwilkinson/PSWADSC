@@ -25,26 +25,21 @@ class PSWADSC
     [Ensure] $Ensure = [Ensure]::Present
 
     [DscProperty()]
-    [Switch] $UseTestCertificate
+    [Bool] $UseTestCertificate
     
 
     # Tests if the resource is in the desired state.
     [bool] Test()
     {        
         Try {
-                if ($Ensure -eq [Ensure]::Present)
+                if ($This.Ensure -eq [Ensure]::Present)
                 { 
                     
-                
+                    return $true
                 }
-                else
+                Else
                 {
-
-
-                }
-                Elseif ($Ensure -eq [Ensure]::Absent)
-                {
-                    Ge
+                    return $true
 
                 } 
         }#Try  
