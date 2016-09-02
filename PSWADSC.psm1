@@ -7,6 +7,7 @@ enum Ensure
     Present
 }
 
+
 # [DscResource()] indicates the class is a DSC resource.
 [DscResource()]
 class PSWADSC
@@ -17,17 +18,11 @@ class PSWADSC
     [string]$WebSiteName = 'Default Web Site'
 
     [DscProperty()]
-    [string]$WebApplicationName
+    [string]$WebApplicationName = 'PSWA'
 
     # Mandatory indicates the property is required and DSC will guarantee it is set.
     [DscProperty()]
     [Ensure] $Ensure = [Ensure]::Present
-
-    # NotConfigurable properties return additional information about the state of the resource.
-    # For example, a Get() method might return the date a resource was last modified.
-    # NOTE: These properties are only used by the Get() method and cannot be set in configuration.        
-    [DscProperty(NotConfigurable)]
-    [Nullable[datetime]] $InstallDate
 
     [DscProperty()]
     [Switch] $UseTestCertificate
@@ -39,7 +34,7 @@ class PSWADSC
         Try {
                 if ($Ensure -eq [Ensure]::Present)
                 { 
-                    Install-PswaWebApplication $PSBoundParameters -whatif
+                    
                 
                 }
                 else
@@ -47,9 +42,11 @@ class PSWADSC
 
 
                 }
+                Elseif ($Ensure -eq [Ensure]::Absent)
+                {
+                    Ge
 
-            return $true 
-
+                } 
         }#Try  
         Catch {
              $exception = $_
@@ -72,8 +69,17 @@ class PSWADSC
     # Gets the resource's current state.
     [PSWADSC] Get()
     {        
+        $PSWA = Get-WindowsFeature -Name WindowsPowerShellWebAccess
+        $AppPool = Get-Item -Path IIS:\AppPools\$($PSBoundParameters['WebApplicationName'])_Pool -ErrorAction SilentlyContinue
+        $WebSite = Get-Item -Path IIS:\Sites\$($PSBoundParameters['WebSiteName']) -ErrorAction SilentlyContinue
+        $SSLbindings = Get-ChildItem -Path IIS:\SslBindings -ErrorAction SilentlyContinue
+
         # NotConfigurable properties are set in the Get method.
-        $this.P3 = something
+        $this.PSWA       = $PSWA
+        $this.AppPool    = $AppPool
+        $this.WebSite    = $WebSite
+        $this.SSLbindings= $SSLbindings
+        $this
         # Return this instance or construct a new instance.
         return $this 
     }    
