@@ -73,7 +73,7 @@ class PSWADSC
         }#Try  
         Catch {
                 $exception = $_
-                Write-Verbose 'Error occurred'
+                Write-Verbose 'Error occurred, something went wrong in TEST'
                 while ($exception.InnerException -ne $null)
                 {
                         $exception = $exception.InnerException
